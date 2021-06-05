@@ -8,6 +8,7 @@ public class playerMovemont : MonoBehaviour
     public float WalkSpeed;
     public float RunSpeed;
     public float CurrentSpeed;
+    Animator anim;
 
     CharacterController controller;
     private Vector3 offSet;
@@ -16,6 +17,7 @@ public class playerMovemont : MonoBehaviour
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+        anim = GetComponent<Animator>();
         RunSpeed = WalkSpeed + 7;
         CurrentSpeed = WalkSpeed;
     }
@@ -34,6 +36,8 @@ public class playerMovemont : MonoBehaviour
 
         if (Input.GetMouseButton(1) || Input.GetMouseButton(0))
         {
+            anim.SetFloat("vertical", vert);
+            anim.SetFloat("horizontal", hor);
             CurrentSpeed = WalkSpeed;
         }
         else if (((hor != 0) || (vert != 0)) && Input.GetKey("left shift"))
