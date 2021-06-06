@@ -6,6 +6,7 @@ public class playerController : MonoBehaviour
 {
     public Animator anim;
     private Rigidbody rb;
+    public float sidewaySpeed = 0.05f;
     public LayerMask layerMsk;
     public bool grounded;
     // Start is called before the first frame update
@@ -52,10 +53,25 @@ public class playerController : MonoBehaviour
         float verticalAxis = Input.GetAxis("Vertical");
         float horizontalAxis = Input.GetAxis("Horizontal");
 
-        Vector3 movement = this.transform.forward * verticalAxis + this.transform.right * horizontalAxis;
+        Vector3 movement = (this.transform.forward * verticalAxis) + (this.transform.right * horizontalAxis);
         movement.Normalize();
 
-        this.transform.position += movement * 0.04f;
+        if (horizontalAxis != 0)
+        {
+            if (verticalAxis != 0)
+            {
+                this.transform.position += movement * 0.003f;
+            }
+            else
+            {
+                this.transform.position += movement * 0.0035f;
+            }    
+        }
+        else
+        {
+            this.transform.position += movement * 0.002f;
+        }
+
 
         anim.SetFloat("vertical", verticalAxis);
         anim.SetFloat("horizontal", horizontalAxis);
