@@ -65,15 +65,26 @@ public class playerController : MonoBehaviour
             else
             {
                 this.transform.position += movement * 0.0035f;
-            }    
+            }
+            
         }
         else
         {
             this.transform.position += movement * 0.002f;
         }
 
+        if (Input.GetKey(KeyCode.LeftShift) && verticalAxis != 0 )
+        {
+            anim.SetBool("running", true);
+        }
+        else
+        {
+            anim.SetBool("running", false);
+        }
 
         anim.SetFloat("vertical", verticalAxis);
         anim.SetFloat("horizontal", horizontalAxis);
+        
+
     }
 }
