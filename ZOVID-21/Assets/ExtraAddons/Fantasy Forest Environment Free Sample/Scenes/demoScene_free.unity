@@ -129,20 +129,28 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1084707879, guid: a4143e6478b7c7e4bb30a147d76284a9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1084707880, guid: a4143e6478b7c7e4bb30a147d76284a9, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.64
+      value: 13.27
       objectReference: {fileID: 0}
     - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.05
+      value: 1.83
       objectReference: {fileID: 0}
     - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.464491
+      value: 21.69
       objectReference: {fileID: 0}
     - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
         type: 3}
@@ -184,11 +192,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1792123977245515578, guid: a4143e6478b7c7e4bb30a147d76284a9,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2824880954599979118, guid: a4143e6478b7c7e4bb30a147d76284a9,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2916489
+      objectReference: {fileID: 0}
+    - target: {fileID: 2824880954599979118, guid: a4143e6478b7c7e4bb30a147d76284a9,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.703946
+      objectReference: {fileID: 0}
     - target: {fileID: 3352295074044783913, guid: a4143e6478b7c7e4bb30a147d76284a9,
         type: 3}
       propertyPath: m_Name
       value: Rifle Idle Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 9120362026682738515, guid: a4143e6478b7c7e4bb30a147d76284a9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: ebfe45a4e8b4d4143a00a87e6643246c, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a4143e6478b7c7e4bb30a147d76284a9, type: 3}
 --- !u!1 &370295285
@@ -783,3 +821,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eded051879df4c147b9010199d240258, type: 3}
+--- !u!1 &1982564981 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3352295074044783913, guid: a4143e6478b7c7e4bb30a147d76284a9,
+    type: 3}
+  m_PrefabInstance: {fileID: 227577015}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &1982564987
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982564981}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}

@@ -76,6 +76,7 @@ public class playerController : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift) && verticalAxis != 0 )
         {
             anim.SetBool("running", true);
+            this.transform.position += movement * 0.007f;
         }
         else
         {
