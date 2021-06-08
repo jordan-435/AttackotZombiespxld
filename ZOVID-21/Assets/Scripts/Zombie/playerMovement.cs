@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
-
-    public float moveSpeed = 7;
+    private float moveSpeed = 7;
     public float smoothMoveTime = .1f;
     public float turnSpeed = 8;
 
@@ -16,19 +15,20 @@ public class playerMovement : MonoBehaviour
     Vector3 velocity;
 
     new Rigidbody rigidbody;
-    private GameObject soonToBeSeptic;
+    private GameObject[] soonToBeSeptic;
     public float strikingDistance = 2f;
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        soonToBeSeptic = GameObject.FindGameObjectWithTag("Antiseptic");
+        moveSpeed = Random.Range(5.0f, 10.0f);
 
 
     }
 
     void Update()
     {
+        soonToBeSeptic = GameObject.FindGameObjectsWithTag("Antiseptic");
         Vector3 inputDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         float inputMagnitude = inputDirection.magnitude;
         smoothInputMagnitude = Mathf.SmoothDamp(smoothInputMagnitude, inputMagnitude, ref smoothMoveVelocity, smoothMoveTime);
@@ -48,16 +48,19 @@ public class playerMovement : MonoBehaviour
 
     void CheckStrikingRange()
     {
-        if(soonToBeSeptic != null)
+        for(int i = 0; i < soonToBeSeptic.Length; i++)
         {
-            Vector3 positionDied = soonToBeSeptic.transform.position;
-            if (Vector3.Distance(soonToBeSeptic.transform.position, transform.position) < strikingDistance)
+            if (soonToBeSeptic != null)
             {
-                Debug.Log("Here!!!");
-                Destroy(soonToBeSeptic);
-                Instantiate(this.gameObject, positionDied, Quaternion.identity);
+                Vector3 positionDied = soonToBeSeptic[i].transform.position;
+                if (Vector3.Distance(soonToBeSeptic[i].transform.position, transform.position) < strikingDistance)
+                {
+                    Destroy(soonToBeSeptic[i]);
+                    Instantiate(this.gameObject, positionDied, Quaternion.identity);
+                }
             }
         }
+
 
     }
     void OnDrawGizmos()

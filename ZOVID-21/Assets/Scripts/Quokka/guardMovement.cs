@@ -7,9 +7,11 @@ public class guardMovement : MonoBehaviour
     public float speed = 5;
     public float waitTime = .3f;
     public float turnspeed = 90;
-
+    public float timeToSpotPlayer = .5f;
+    float playerVisibleTimer;
+    int whoGotCaught;
     public Transform pathHolder;
-    public GameObject player;
+    public GameObject[] player;
 
     public Light spotlight;
     public float viewDistance;
@@ -22,7 +24,6 @@ public class guardMovement : MonoBehaviour
     private void Start()
     {
         originalSpotlightColor = spotlight.color;
-        player = GameObject.FindGameObjectWithTag("Player");
         viewAngle = spotlight.spotAngle;
 
         Vector3[] waypoints = new Vector3[pathHolder.childCount];
@@ -36,43 +37,59 @@ public class guardMovement : MonoBehaviour
     }
     void Update()
     {
-        if(player != null)
+        player = GameObject.FindGameObjectsWithTag("Player");
+        if (player != null)
         {
             if (CanSeePlayer())
             {
                 spotlight.color = Color.red;
-                BlastThatMf();
+                playerVisibleTimer += Time.deltaTime;
+            }
+            else
+            {
+                playerVisibleTimer -= Time.deltaTime;
+            }
+            playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
+            spotlight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
+            if(playerVisibleTimer >= timeToSpotPlayer)
+            {
+                BlastThatMf(whoGotCaught);
             }
         }
         else
         {
             spotlight.color = originalSpotlightColor;
         }
+        
     }
 
-    void BlastThatMf()
+    void BlastThatMf(int zombieTagged)
     {
-        Destroy(player,5);
+        Destroy(player[zombieTagged]);
     }
 
 
     bool CanSeePlayer()
     {
-
-        if (Vector3.Distance(transform.position, player.transform.position) < viewDistance)
+        for(int i = 0; i < player.Length; i++)
         {
-            Vector3 dirToPlayer = (player.transform.position - transform.position).normalized;
-            float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, dirToPlayer);
-            if (angleBetweenGuardAndPlayer < viewAngle / 2f)
+            if (Vector3.Distance(transform.position, player[i].transform.position) < viewDistance)
             {
-                if (!Physics.Linecast(transform.position, player.transform.position, viewMask))
+                Vector3 dirToPlayer = (player[i].transform.position - transform.position).normalized;
+                float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+                if (angleBetweenGuardAndPlayer < viewAngle / 2f)
                 {
-                    return true;
+                    if (!Physics.Linecast(transform.position, player[i].transform.position, viewMask))
+                    {
+                        whoGotCaught = i;
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
+
     IEnumerator FollowPath(Vector3[] waypoints)
     {
         transform.position = waypoints[0];
