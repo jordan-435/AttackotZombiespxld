@@ -43,11 +43,13 @@ public class guardMovement : MonoBehaviour
             if (CanSeePlayer())
             {
                 spotlight.color = Color.red;
+                anim.SetBool("Aim", true);
                 playerVisibleTimer += Time.deltaTime;
             }
             else
             {
                 playerVisibleTimer -= Time.deltaTime;
+                anim.SetBool("Aim", false);
             }
             playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
             spotlight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
@@ -65,7 +67,9 @@ public class guardMovement : MonoBehaviour
 
     void BlastThatMf(int zombieTagged)
     {
-        Destroy(player[zombieTagged]);
+        anim.SetBool("fire", true);
+        Destroy(player[zombieTagged], 5);
+        anim.SetBool("fire", false);
     }
 
 

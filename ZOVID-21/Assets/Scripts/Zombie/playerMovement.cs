@@ -55,6 +55,7 @@ public class playerMovement : MonoBehaviour
                 Vector3 positionDied = soonToBeSeptic[i].transform.position;
                 if (Vector3.Distance(soonToBeSeptic[i].transform.position, transform.position) < strikingDistance)
                 {
+                    
                     Destroy(soonToBeSeptic[i]);
                     Instantiate(this.gameObject, positionDied, Quaternion.identity);
                 }
