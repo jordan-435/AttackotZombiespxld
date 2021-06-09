@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
+    private guardMovement[] guard;
+
     private float moveSpeed = 7;
     public float smoothMoveTime = .1f;
     public float turnSpeed = 8;
+    bool instantiated = false;
 
     float angle;
 
@@ -17,6 +20,11 @@ public class playerMovement : MonoBehaviour
     new Rigidbody rigidbody;
     private GameObject[] soonToBeSeptic;
     public float strikingDistance = 2f;
+
+    void Awake(){
+        
+        guard = GameObject.FindObjectsOfType<guardMovement>();
+    }
 
     void Start()
     {
@@ -56,14 +64,28 @@ public class playerMovement : MonoBehaviour
                 if (Vector3.Distance(soonToBeSeptic[i].transform.position, transform.position) < strikingDistance)
                 {
                     
-                    Destroy(soonToBeSeptic[i]);
-                    Instantiate(this.gameObject, positionDied, Quaternion.identity);
+                    guard[i].Alive = false;
+                    Destroy(soonToBeSeptic[i],3);
+                    StartCoroutine(GetThatMf(positionDied));
+
                 }
             }
         }
-
-
     }
+
+    IEnumerator GetThatMf(Vector3 lookTarget)
+    {
+        
+        Debug.Log("Here!!!!");
+        yield return new WaitForSeconds(4);
+        if(instantiated == false)
+        {
+            Instantiate(this.gameObject, lookTarget, Quaternion.identity);
+            instantiated = true;
+        }
+        
+    }
+
     void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, strikingDistance);

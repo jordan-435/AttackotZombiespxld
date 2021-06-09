@@ -12,9 +12,15 @@ public class guardMovement : MonoBehaviour
     int whoGotCaught;
     public Transform pathHolder;
     public GameObject[] player;
+    public bool Alive = true;
 
     public Light spotlight;
-    public float viewDistance;
+    public float viewDistanceFar = 8;
+    public float viewDistanceMid;
+    public float viewDistanceClose;
+    public float immediateDistance = 2;
+
+    Coroutine walkPath;
     public LayerMask viewMask;
     float viewAngle;
     Color originalSpotlightColor;
@@ -23,6 +29,8 @@ public class guardMovement : MonoBehaviour
 
     private void Start()
     {
+        viewDistanceMid = viewDistanceFar - (viewDistanceFar / 4f);
+        viewDistanceClose = viewDistanceMid - (viewDistanceMid / 2f);
         originalSpotlightColor = spotlight.color;
         viewAngle = spotlight.spotAngle;
 
@@ -32,7 +40,7 @@ public class guardMovement : MonoBehaviour
             waypoints[i] = pathHolder.GetChild(i).position;
             waypoints[i] = new Vector3(waypoints[i].x, transform.position.y, waypoints[i].z);
         }
-        StartCoroutine(FollowPath(waypoints));
+        walkPath = StartCoroutine(FollowPath(waypoints));
 
     }
     void Update()
@@ -40,44 +48,63 @@ public class guardMovement : MonoBehaviour
         player = GameObject.FindGameObjectsWithTag("Player");
         if (player != null)
         {
-            if (CanSeePlayer())
+            if (CanSeePlayer() != 0)
             {
                 spotlight.color = Color.red;
-                anim.SetBool("Aim", true);
                 playerVisibleTimer += Time.deltaTime;
             }
             else
             {
-                playerVisibleTimer -= Time.deltaTime;
-                anim.SetBool("Aim", false);
+                playerVisibleTimer -= Time.deltaTime;              
             }
             playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
             spotlight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
-            if(playerVisibleTimer >= timeToSpotPlayer)
-            {
-                BlastThatMf(whoGotCaught);
-            }
+
         }
         else
         {
             spotlight.color = originalSpotlightColor;
+        }
+        if (Alive != true)
+        {
+            anim.SetBool("Die", true);
+            StopCoroutine(walkPath);
         }
         
     }
 
     void BlastThatMf(int zombieTagged)
     {
+        transform.LookAt(player[zombieTagged].transform.position);
         anim.SetBool("fire", true);
         Destroy(player[zombieTagged], 5);
-        anim.SetBool("fire", false);
+        
+    }
+
+    void StepTowards(int zombieTagged)
+    {
+        anim.SetBool("Aim", true);
+
+        transform.LookAt(player[zombieTagged].transform.position);
+        transform.position = Vector3.MoveTowards(transform.position, player[zombieTagged].transform.position, speed * Time.deltaTime);
+        
     }
 
 
-    bool CanSeePlayer()
+
+
+
+
+
+
+
+
+
+    int CanSeePlayer()
     {
         for(int i = 0; i < player.Length; i++)
         {
-            if (Vector3.Distance(transform.position, player[i].transform.position) < viewDistance)
+            if (Vector3.Distance(transform.position, player[i].transform.position) <= viewDistanceFar)
             {
                 Vector3 dirToPlayer = (player[i].transform.position - transform.position).normalized;
                 float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, dirToPlayer);
@@ -85,14 +112,42 @@ public class guardMovement : MonoBehaviour
                 {
                     if (!Physics.Linecast(transform.position, player[i].transform.position, viewMask))
                     {
+                        if (Vector3.Distance(transform.position, player[i].transform.position) <= viewDistanceMid)
+                        {
+                            if(Vector3.Distance(transform.position, player[i].transform.position) <= viewDistanceClose)
+                            {
+                                return 3;
+                            }
+                            return 2;
+                        }
+                        
                         whoGotCaught = i;
-                        return true;
+                        return 1;
                     }
                 }
             }
+            if (Vector3.Distance(transform.position, player[i].transform.position) <= immediateDistance)
+            {
+                    if (!Physics.Linecast(transform.position, player[i].transform.position, viewMask))
+                    {
+                        whoGotCaught = i;
+                        return 3;
+                    }  
+            }
         }
-        return false;
+ 
+        return 0;
     }
+
+
+
+
+
+
+
+
+
+
 
     IEnumerator FollowPath(Vector3[] waypoints)
     {
@@ -103,12 +158,34 @@ public class guardMovement : MonoBehaviour
 
         while (true)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, speed * Time.deltaTime);
-            anim.SetFloat("vertical", 1);
+
+            if (CanSeePlayer() == 1)
+            {
+                float stop = 0;
+                transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, stop * Time.deltaTime);
+                anim.SetBool("Aim", true);
+            }
+            else if (CanSeePlayer() == 2)
+            {
+                StepTowards(whoGotCaught);
+            }
+            else if(CanSeePlayer() == 3)
+            {
+                BlastThatMf(whoGotCaught);
+            }
+            else
+            {
+                anim.SetBool("Aim", false);
+                anim.SetBool("fire", false);
+                transform.LookAt(targetWaypoint);
+                transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, speed * Time.deltaTime);
+                anim.SetFloat("vertical", 1);
+            }
+           
             if (transform.position == targetWaypoint)
             {
-                Debug.Log("Here!!!!!");
                 anim.SetFloat("vertical", 0);
+                anim.SetBool("turn", true);
                 targetWaypointIndex = (targetWaypointIndex + 1) % waypoints.Length;
                 targetWaypoint = waypoints[targetWaypointIndex];
                 yield return new WaitForSeconds(waitTime);
@@ -116,6 +193,7 @@ public class guardMovement : MonoBehaviour
             }
             yield return null;
         }
+
     }
 
     IEnumerator TurnToFace(Vector3 lookTarget)
@@ -129,6 +207,7 @@ public class guardMovement : MonoBehaviour
             transform.eulerAngles = Vector3.up * angle;
             yield return null;
         }
+        anim.SetBool("turn", false);
     }
 
 
@@ -145,6 +224,6 @@ public class guardMovement : MonoBehaviour
         Gizmos.DrawLine(previousPosition, startPosition);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.forward * viewDistance);
+        Gizmos.DrawRay(transform.position, transform.forward * viewDistanceFar);
     }
 }
