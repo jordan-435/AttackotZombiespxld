@@ -21,6 +21,17 @@ public class playerMovement : MonoBehaviour
     private GameObject[] soonToBeSeptic;
     public float strikingDistance = 2f;
 
+    Coroutine Attacked;
+    public bool gettingAttacked = false;
+    public bool playerDead = false;
+
+    public HealthBarZ zhBar;
+    public int currentHealth;
+    int MaxHealth = 100;
+
+    
+
+
     void Awake(){
         
         guard = GameObject.FindObjectsOfType<guardMovement>();
@@ -28,6 +39,8 @@ public class playerMovement : MonoBehaviour
 
     void Start()
     {
+        currentHealth = MaxHealth;
+        zhBar.SetMaxHealth(MaxHealth);
         rigidbody = GetComponent<Rigidbody>();
         moveSpeed = Random.Range(5.0f, 10.0f);
 
@@ -46,6 +59,10 @@ public class playerMovement : MonoBehaviour
 
         velocity = transform.forward * moveSpeed * smoothInputMagnitude;
         CheckStrikingRange();
+        if(gettingAttacked == true)
+        {
+            Attacked = StartCoroutine(TakeDamage());
+        }
     }
 
     void FixedUpdate()
@@ -63,21 +80,60 @@ public class playerMovement : MonoBehaviour
                 Vector3 positionDied = soonToBeSeptic[i].transform.position;
                 if (Vector3.Distance(soonToBeSeptic[i].transform.position, transform.position) < strikingDistance)
                 {
+                    Kill(i, positionDied);
                     
-                    guard[i].Alive = false;
-                    Destroy(soonToBeSeptic[i],3);
-                    StartCoroutine(GetThatMf(positionDied));
-
+                }
+                else
+                {
+                    guard[i].gettingAttacked = false;
                 }
             }
         }
     }
 
-    IEnumerator GetThatMf(Vector3 lookTarget)
+    void Kill(int guardTagged, Vector3 positionDied)
+    {
+
+        guard[guardTagged].gettingAttacked = true;
+        //Debug.Log("Here!!!");
+        if (guard[guardTagged].guardDead == true)
+        {
+            Destroy(soonToBeSeptic[guardTagged]);
+            StartCoroutine(CreateNewLife(positionDied));
+        }
+    }
+
+    IEnumerator TakeDamage()
+    {
+        while (gettingAttacked)
+        {
+            currentHealth -= 1;
+            zhBar.SetHealth(currentHealth);
+            yield return new WaitForSeconds(1);
+            Debug.Log(currentHealth);
+            if (currentHealth < 1)
+            {
+                Die();
+            }
+
+        }
+    }
+
+    void Die()
+    {
+        playerDead = true;
+    }
+
+
+
+
+
+
+
+    IEnumerator CreateNewLife(Vector3 lookTarget)
     {
         
-        Debug.Log("Here!!!!");
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(1);
         if(instantiated == false)
         {
             Instantiate(this.gameObject, lookTarget, Quaternion.identity);

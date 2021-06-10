@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class guardMovement : MonoBehaviour
 {
+    private playerMovement[] xplayer;
+
     public float speed = 5;
     public float waitTime = .3f;
     public float turnspeed = 90;
@@ -12,7 +14,7 @@ public class guardMovement : MonoBehaviour
     int whoGotCaught;
     public Transform pathHolder;
     public GameObject[] player;
-    public bool Alive = true;
+    public bool gettingAttacked = false;
 
     public Light spotlight;
     public float viewDistanceFar = 8;
@@ -21,18 +23,26 @@ public class guardMovement : MonoBehaviour
     public float immediateDistance = 2;
 
     Coroutine walkPath;
+    Coroutine Attacked;
     public LayerMask viewMask;
     float viewAngle;
     Color originalSpotlightColor;
 
     public Animator anim;
+    int MaxHealth = 100;
+    int currentHealth;
+    public HealthBarQ hBar;
+    public bool guardDead = false;
 
     private void Start()
     {
+        currentHealth = MaxHealth;
+        hBar.SetMaxHealth(MaxHealth);
         viewDistanceMid = viewDistanceFar - (viewDistanceFar / 4f);
         viewDistanceClose = viewDistanceMid - (viewDistanceMid / 2f);
         originalSpotlightColor = spotlight.color;
         viewAngle = spotlight.spotAngle;
+        xplayer = GameObject.FindObjectsOfType<playerMovement>();
 
         Vector3[] waypoints = new Vector3[pathHolder.childCount];
         for(int i = 0; i < waypoints.Length; i++)
@@ -65,19 +75,10 @@ public class guardMovement : MonoBehaviour
         {
             spotlight.color = originalSpotlightColor;
         }
-        if (Alive != true)
+        if (gettingAttacked == true)
         {
-            anim.SetBool("Die", true);
-            StopCoroutine(walkPath);
+            Attacked = StartCoroutine(TakeDamage()); 
         }
-        
-    }
-
-    void BlastThatMf(int zombieTagged)
-    {
-        transform.LookAt(player[zombieTagged].transform.position);
-        anim.SetBool("fire", true);
-        Destroy(player[zombieTagged], 5);
         
     }
 
@@ -90,7 +91,41 @@ public class guardMovement : MonoBehaviour
         
     }
 
+    void Kill(int zombieTagged)
+    {
+        transform.LookAt(player[zombieTagged].transform.position);
+        anim.SetBool("fire", true);
+        xplayer[zombieTagged].gettingAttacked = true;
+        if (xplayer[zombieTagged].playerDead == true)
+        {
+            Destroy(player[zombieTagged],5);
+        }
+    }
 
+    IEnumerator TakeDamage()
+    {
+        while (gettingAttacked)
+        {
+            currentHealth -= 1;
+            hBar.SetHealth(currentHealth);
+            yield return new WaitForSeconds(1);
+            if (currentHealth < 0)
+            {
+                Die();
+            }
+            
+        }
+
+    }
+
+    void Die()
+    {
+        anim.SetBool("Die", true);
+        StopCoroutine(Attacked);
+        StopCoroutine(walkPath);
+        guardDead = true;
+
+    }
 
 
 
@@ -139,16 +174,6 @@ public class guardMovement : MonoBehaviour
         return 0;
     }
 
-
-
-
-
-
-
-
-
-
-
     IEnumerator FollowPath(Vector3[] waypoints)
     {
         transform.position = waypoints[0];
@@ -171,7 +196,7 @@ public class guardMovement : MonoBehaviour
             }
             else if(CanSeePlayer() == 3)
             {
-                BlastThatMf(whoGotCaught);
+                Kill(whoGotCaught);
             }
             else
             {
