@@ -4,35 +4,48 @@ using UnityEngine;
 
 public class guardMovement : MonoBehaviour
 {
-    private playerMovement[] xplayer;
 
-    public float speed = 5;
-    public float waitTime = .3f;
-    public float turnspeed = 90;
+    
+    //Specific Zombie 
+    int whoGotCaught;
+    public GameObject[] player;
+
+    public bool guardDead = false;
+
+    //Recognize Zombie
+    public Light spotlight;
+    Color originalSpotlightColor;
     public float timeToSpotPlayer = .5f;
     float playerVisibleTimer;
-    int whoGotCaught;
-    public Transform pathHolder;
-    public GameObject[] player;
-    public bool gettingAttacked = false;
-
-    public Light spotlight;
     public float viewDistanceFar = 8;
     public float viewDistanceMid;
     public float viewDistanceClose;
     public float immediateDistance = 2;
+    
 
+    //Guard Movement
     Coroutine walkPath;
-    Coroutine Attacked;
     public LayerMask viewMask;
     float viewAngle;
-    Color originalSpotlightColor;
+    public Transform pathHolder;
+    public float speed = 5;
+    public float waitTime = .3f;
+    public float turnspeed = 90;
 
     public Animator anim;
-    int MaxHealth = 100;
-    int currentHealth;
+
+    //HealthBar Stuff
     public HealthBarQ hBar;
-    public bool guardDead = false;
+    int MaxHealth = 1000;
+    int currentHealth;
+    
+
+
+    //Weapon Damage
+    public int HitHowHard = 5;
+    public float fireRate = 15f;
+    private float nextTimeToFire = 0f;
+
 
     private void Start()
     {
@@ -42,7 +55,6 @@ public class guardMovement : MonoBehaviour
         viewDistanceClose = viewDistanceMid - (viewDistanceMid / 2f);
         originalSpotlightColor = spotlight.color;
         viewAngle = spotlight.spotAngle;
-        xplayer = GameObject.FindObjectsOfType<playerMovement>();
 
         Vector3[] waypoints = new Vector3[pathHolder.childCount];
         for(int i = 0; i < waypoints.Length; i++)
@@ -51,7 +63,6 @@ public class guardMovement : MonoBehaviour
             waypoints[i] = new Vector3(waypoints[i].x, transform.position.y, waypoints[i].z);
         }
         walkPath = StartCoroutine(FollowPath(waypoints));
-
     }
     void Update()
     {
@@ -69,15 +80,10 @@ public class guardMovement : MonoBehaviour
             }
             playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
             spotlight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
-
         }
         else
         {
             spotlight.color = originalSpotlightColor;
-        }
-        if (gettingAttacked == true)
-        {
-            Attacked = StartCoroutine(TakeDamage()); 
         }
         
     }
@@ -85,55 +91,52 @@ public class guardMovement : MonoBehaviour
     void StepTowards(int zombieTagged)
     {
         anim.SetBool("Aim", true);
-
         transform.LookAt(player[zombieTagged].transform.position);
         transform.position = Vector3.MoveTowards(transform.position, player[zombieTagged].transform.position, speed * Time.deltaTime);
-        
     }
 
     void Kill(int zombieTagged)
     {
-        transform.LookAt(player[zombieTagged].transform.position);
-        anim.SetBool("fire", true);
-        xplayer[zombieTagged].gettingAttacked = true;
-        if (xplayer[zombieTagged].playerDead == true)
+        if (Time.time >= nextTimeToFire)
         {
-            Destroy(player[zombieTagged],5);
+            nextTimeToFire = Time.time + 1f / fireRate;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.forward, out hit, viewDistanceClose))
+            {
+                Debug.Log(hit.transform.name);
+                playerMovement target = hit.transform.GetComponent<playerMovement>();
+                if (target != null)
+                {
+                    target.TakeDamage(HitHowHard);
+                }
+            }
         }
+            transform.LookAt(player[zombieTagged].transform.position);
+            anim.SetBool("fire", true);
     }
 
-    IEnumerator TakeDamage()
+    public void TakeDamage(int amount)
     {
-        while (gettingAttacked)
+        currentHealth -= amount;
+        hBar.SetHealth(currentHealth);
+        if (currentHealth <= 0)
         {
-            currentHealth -= 1;
-            hBar.SetHealth(currentHealth);
-            yield return new WaitForSeconds(1);
-            if (currentHealth < 0)
-            {
-                Die();
-            }
-            
+            Die();
         }
-
     }
 
     void Die()
     {
         anim.SetBool("Die", true);
-        StopCoroutine(Attacked);
         StopCoroutine(walkPath);
         guardDead = true;
-
+        Invoke("Dissapear", 5);
     }
 
-
-
-
-
-
-
-
+    void Dissapear()
+    {
+        Destroy(gameObject);  
+    }
 
     int CanSeePlayer()
     {
@@ -170,7 +173,6 @@ public class guardMovement : MonoBehaviour
                     }  
             }
         }
- 
         return 0;
     }
 
@@ -183,7 +185,6 @@ public class guardMovement : MonoBehaviour
 
         while (true)
         {
-
             if (CanSeePlayer() == 1)
             {
                 float stop = 0;
@@ -218,7 +219,6 @@ public class guardMovement : MonoBehaviour
             }
             yield return null;
         }
-
     }
 
     IEnumerator TurnToFace(Vector3 lookTarget)
@@ -236,6 +236,44 @@ public class guardMovement : MonoBehaviour
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private void OnDrawGizmos()
     {
         Vector3 startPosition = pathHolder.GetChild(0).position;
@@ -250,5 +288,8 @@ public class guardMovement : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, transform.forward * viewDistanceFar);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, transform.forward * viewDistanceClose);
     }
 }
