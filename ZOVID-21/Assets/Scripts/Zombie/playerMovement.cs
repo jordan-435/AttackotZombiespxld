@@ -18,6 +18,7 @@ public class playerMovement : MonoBehaviour
     new Rigidbody rigidbody;
     private GameObject[] soonToBeSeptic;
     private guardMovement[] guard;
+    public GameObject[] septic;
 
 
     //HealthBar Stuff
@@ -27,12 +28,14 @@ public class playerMovement : MonoBehaviour
 
     //Attack Skill
     public int damage = 10;
-    public float strikingDistance = 2f;
+    public float strikingDistance = 1.25f;
+    public float AttachDistance = 3.25f;
 
 
 
     void Awake(){
         guard = GameObject.FindObjectsOfType<guardMovement>();
+
     }
 
     void Start()
@@ -42,11 +45,13 @@ public class playerMovement : MonoBehaviour
         zhBar.SetHealth(MaxHealth);
         rigidbody = GetComponent<Rigidbody>();
         moveSpeed = Random.Range(5.0f, 10.0f);
+
     }
 
     void Update()
     {
         soonToBeSeptic = GameObject.FindGameObjectsWithTag("Antiseptic");
+        
         PlayerMControls();
         CheckStrikingRange();
 
@@ -96,7 +101,6 @@ public class playerMovement : MonoBehaviour
         {
             target.TakeDamage(damage);
         }
-        //guard[guardTagged].gettingAttacked = true;
         if (guard[guardTagged].guardDead == true)
         {
             StartCoroutine(CreateNewLife(positionDied));
@@ -145,6 +149,10 @@ public class playerMovement : MonoBehaviour
 
     void OnDrawGizmos()
     {
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, strikingDistance);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, AttachDistance);
     }
 }

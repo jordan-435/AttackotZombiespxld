@@ -111,9 +111,21 @@ public class guardMovement : MonoBehaviour
                 }
             }
         }
-            transform.LookAt(player[zombieTagged].transform.position);
-            anim.SetBool("fire", true);
+        //CheckIfAnotherZombieIsCloser(zombieTagged);
+        transform.LookAt(player[zombieTagged].transform.position);
+        anim.SetBool("fire", true);
+
     }
+
+    void CheckIfAnotherZombieIsCloser( int currentZombieLockedIn)
+    {
+        if(CanSeePlayer(currentZombieLockedIn) == 3)
+        {
+            Kill(whoGotCaught);
+        }
+    }
+
+
 
     public void TakeDamage(int amount)
     {
@@ -171,6 +183,47 @@ public class guardMovement : MonoBehaviour
                         whoGotCaught = i;
                         return 3;
                     }  
+            }
+        }
+        return 0;
+    }
+
+
+    int CanSeePlayer(int playerAlreadyTagged)
+    {
+        for (int i = 0; i < player.Length; i++)
+        {
+            if (playerAlreadyTagged == i) continue;
+
+            if (Vector3.Distance(transform.position, player[i].transform.position) <= viewDistanceFar)
+            {
+                Vector3 dirToPlayer = (player[i].transform.position - transform.position).normalized;
+                float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+                if (angleBetweenGuardAndPlayer < viewAngle / 2f)
+                {
+                    if (!Physics.Linecast(transform.position, player[i].transform.position, viewMask))
+                    {
+                        if (Vector3.Distance(transform.position, player[i].transform.position) <= viewDistanceMid)
+                        {
+                            if (Vector3.Distance(transform.position, player[i].transform.position) <= viewDistanceClose)
+                            {
+                                return 3;
+                            }
+                            return 2;
+                        }
+
+                        whoGotCaught = i;
+                        return 1;
+                    }
+                }
+            }
+            if (Vector3.Distance(transform.position, player[i].transform.position) <= immediateDistance)
+            {
+                if (!Physics.Linecast(transform.position, player[i].transform.position, viewMask))
+                {
+                    whoGotCaught = i;
+                    return 3;
+                }
             }
         }
         return 0;
