@@ -33,8 +33,10 @@ public class playerMovement : MonoBehaviour
 
 
 
+
     void Awake(){
         guard = GameObject.FindObjectsOfType<guardMovement>();
+        septic = GameObject.FindGameObjectsWithTag("Player");
 
     }
 
@@ -46,10 +48,23 @@ public class playerMovement : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         moveSpeed = Random.Range(5.0f, 10.0f);
 
+
+
     }
 
     void Update()
     {
+        Debug.Log(septic.Length);
+        if (septic.Length != 1)
+        {
+            Debug.Log("Here...");
+            if(Vector3.Distance(transform.position, septic[0].transform.position) > AttachDistance)
+            {
+                Debug.Log("Here!!!");
+                transform.position =  Vector3.MoveTowards(transform.position, septic[0].transform.position, 3 * Time.deltaTime);
+            }
+        }
+
         soonToBeSeptic = GameObject.FindGameObjectsWithTag("Antiseptic");
         
         PlayerMControls();

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Antiseptic
+  - Camtop
+  - CamAngled
   layers:
   - Default
   - TransparentFX
