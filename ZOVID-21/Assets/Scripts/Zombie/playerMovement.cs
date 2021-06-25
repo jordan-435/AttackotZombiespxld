@@ -29,7 +29,7 @@ public class playerMovement : MonoBehaviour
     //Attack Skill
     public int damage = 10;
     public float strikingDistance = 1.25f;
-    public float AttachDistance = 3.25f;
+    public float AttachDistance;
 
 
 
@@ -47,6 +47,7 @@ public class playerMovement : MonoBehaviour
         zhBar.SetHealth(MaxHealth);
         rigidbody = GetComponent<Rigidbody>();
         moveSpeed = Random.Range(5.0f, 10.0f);
+        AttachDistance = Random.Range(1.0f, 4.0f);
 
 
 

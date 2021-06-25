@@ -51,8 +51,8 @@ public class guardMovement : MonoBehaviour
     {
         currentHealth = MaxHealth;
         hBar.SetMaxHealth(MaxHealth);
-        viewDistanceMid = viewDistanceFar - (viewDistanceFar / 4f);
-        viewDistanceClose = viewDistanceMid - (viewDistanceMid / 2f);
+        viewDistanceMid = viewDistanceFar - (viewDistanceFar / 8f);
+        viewDistanceClose = viewDistanceMid - (viewDistanceMid / 4f);
         originalSpotlightColor = spotlight.color;
         viewAngle = spotlight.spotAngle;
 
@@ -111,7 +111,7 @@ public class guardMovement : MonoBehaviour
                 }
             }
         }
-        //CheckIfAnotherZombieIsCloser(zombieTagged);
+        CheckIfAnotherZombieIsCloser(zombieTagged);
         transform.LookAt(player[zombieTagged].transform.position);
         anim.SetBool("fire", true);
 
@@ -242,6 +242,7 @@ public class guardMovement : MonoBehaviour
             {
                 float stop = 0;
                 transform.position = Vector3.MoveTowards(transform.position, targetWaypoint, stop * Time.deltaTime);
+                transform.LookAt(player[whoGotCaught].transform.position);
                 anim.SetBool("Aim", true);
             }
             else if (CanSeePlayer() == 2)
