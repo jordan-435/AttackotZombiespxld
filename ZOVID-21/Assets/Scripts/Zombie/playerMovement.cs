@@ -31,7 +31,7 @@ public class playerMovement : MonoBehaviour
     public float strikingDistance = 1.25f;
     public float AttachDistance;
 
-
+    public Animator anim;
 
 
     void Awake(){
@@ -89,6 +89,15 @@ public class playerMovement : MonoBehaviour
         angle = Mathf.LerpAngle(angle, targetAngle, Time.deltaTime * turnSpeed * inputMagnitude);
 
         velocity = transform.forward * moveSpeed * smoothInputMagnitude;
+
+
+        Debug.Log(Input.GetAxisRaw("Horizontal"));
+
+        if ((Input.GetAxisRaw("Horizontal") > 0) || (Input.GetAxisRaw("Vertical") > 0))
+        {
+            anim.SetFloat("Movement", 1);
+            
+        }
     }
 
     void CheckStrikingRange()
