@@ -93,10 +93,16 @@ public class playerMovement : MonoBehaviour
 
         Debug.Log(Input.GetAxisRaw("Horizontal"));
 
-        if ((Input.GetAxisRaw("Horizontal") > 0) || (Input.GetAxisRaw("Vertical") > 0))
+        //Zombie Movement Animation
+        if ((Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0) || (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0))
         {
+            //Zombie 1
             anim.SetFloat("Movement", 1);
             
+        }
+        else
+        {
+            anim.SetFloat("Movement", 0);
         }
     }
 
