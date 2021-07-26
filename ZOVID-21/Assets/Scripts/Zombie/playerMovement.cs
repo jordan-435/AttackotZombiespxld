@@ -38,6 +38,15 @@ public class playerMovement : MonoBehaviour
         guard = GameObject.FindObjectsOfType<guardMovement>();
         septic = GameObject.FindGameObjectsWithTag("Player");
 
+        //Scale the Zombie(copy) by 15
+        Vector3 scale = transform.localScale;
+        scale.y = 15F; // your new value
+
+        scale.z = 15F; // your new value
+
+        scale.x = 15F; // your new value
+        transform.localScale = scale;
+
     }
 
     void Start()
@@ -159,8 +168,11 @@ public class playerMovement : MonoBehaviour
         yield return new WaitForSeconds(5);
         if(instantiated == false)
         {
+
             Instantiate(this.gameObject, lookTarget, Quaternion.identity);
             instantiated = true;
+
+            
         }  
     }
 
