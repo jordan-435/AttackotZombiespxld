@@ -41,9 +41,7 @@ public class playerMovement : MonoBehaviour
         //Scale the Zombie(copy) by 15
         Vector3 scale = transform.localScale;
         scale.y = 15F; // your new value
-
         scale.z = 15F; // your new value
-
         scale.x = 15F; // your new value
         transform.localScale = scale;
 
@@ -64,13 +62,10 @@ public class playerMovement : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(septic.Length);
         if (septic.Length != 1)
         {
-            Debug.Log("Here...");
             if(Vector3.Distance(transform.position, septic[0].transform.position) > AttachDistance)
             {
-                Debug.Log("Here!!!");
                 transform.position =  Vector3.MoveTowards(transform.position, septic[0].transform.position, 3 * Time.deltaTime);
             }
         }
@@ -100,7 +95,6 @@ public class playerMovement : MonoBehaviour
         velocity = transform.forward * moveSpeed * smoothInputMagnitude;
 
 
-        Debug.Log(Input.GetAxisRaw("Horizontal"));
 
         //Zombie Movement Animation
         if ((Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0) || (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0))
@@ -149,7 +143,7 @@ public class playerMovement : MonoBehaviour
 
     public void TakeDamage(int amount)
     {        
-        Debug.Log("Damage Taken: " + currentHealth);
+        
         currentHealth -= amount;
         zhBar.SetHealth(currentHealth);
         if (currentHealth <= 0f)

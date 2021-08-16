@@ -103,7 +103,6 @@ public class guardMovement : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, viewDistanceClose))
             {
-                Debug.Log(hit.transform.name);
                 playerMovement target = hit.transform.GetComponent<playerMovement>();
                 if (target != null)
                 {
@@ -111,9 +110,9 @@ public class guardMovement : MonoBehaviour
                 }
             }
         }
-        CheckIfAnotherZombieIsCloser(zombieTagged);
-        transform.LookAt(player[zombieTagged].transform.position);
-        anim.SetBool("fire", true);
+     //   CheckIfAnotherZombieIsCloser(zombieTagged);
+     //   transform.LookAt(player[zombieTagged].transform.position);
+     //   anim.SetBool("fire", true);
 
     }
 
