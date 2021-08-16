@@ -103,7 +103,6 @@ public class guardMovement : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, viewDistanceClose))
             {
-                Debug.Log(hit.transform.name);
                 playerMovement target = hit.transform.GetComponent<playerMovement>();
                 if (target != null)
                 {
