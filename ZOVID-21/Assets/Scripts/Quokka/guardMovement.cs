@@ -111,9 +111,9 @@ public class guardMovement : MonoBehaviour
                 }
             }
         }
-        CheckIfAnotherZombieIsCloser(zombieTagged);
-        transform.LookAt(player[zombieTagged].transform.position);
-        anim.SetBool("fire", true);
+     //   CheckIfAnotherZombieIsCloser(zombieTagged);
+     //   transform.LookAt(player[zombieTagged].transform.position);
+     //   anim.SetBool("fire", true);
 
     }
 
