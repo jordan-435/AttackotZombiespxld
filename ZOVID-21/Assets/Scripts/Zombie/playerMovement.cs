@@ -15,6 +15,8 @@ public class playerMovement : MonoBehaviour
 
     bool instantiated = false;
 
+ 
+
     new Rigidbody rigidbody;
     private GameObject[] soonToBeSeptic;
     private guardMovement[] guard;
@@ -61,9 +63,13 @@ public class playerMovement : MonoBehaviour
     }
 
     void Update()
-    {
+
+    {   //Actions taken when a zombie is extantiated
+
         if (septic.Length != 1)
         {
+            
+
             if(Vector3.Distance(transform.position, septic[0].transform.position) > AttachDistance)
             {
                 transform.position =  Vector3.MoveTowards(transform.position, septic[0].transform.position, 3 * Time.deltaTime);
@@ -74,7 +80,6 @@ public class playerMovement : MonoBehaviour
         
         PlayerMControls();
         CheckStrikingRange();
-
     }
 
     void FixedUpdate()
@@ -120,6 +125,11 @@ public class playerMovement : MonoBehaviour
                 {
                     Kill(i, positionDied);
                 }
+                else {
+                    anim.SetBool("Attack", false);
+                
+                }
+                    
             }
             if (guard[i].guardDead == true)
             {
@@ -133,6 +143,11 @@ public class playerMovement : MonoBehaviour
         guardMovement target = soonToBeSeptic[guardTagged].transform.GetComponent<guardMovement>();
         if (target != null)
         {
+            // Zombie attack animation
+            anim.SetBool("Attack", true);
+
+
+            // Guard is taking damage
             target.TakeDamage(damage);
         }
         if (guard[guardTagged].guardDead == true)
