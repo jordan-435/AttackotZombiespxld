@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44702768, g: 0.4969229, b: 0.5750748, a: 1}
+  m_IndirectSpecularColor: {r: 0.44702828, g: 0.49692369, b: 0.575076, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -722,6 +722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   septic: []
+  cameraHeight: 10.4
 --- !u!81 &548738181
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1765,6 +1766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   septic: []
+  cameraHeight: 10.4
 --- !u!81 &1522939864
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2428,7 +2430,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: ab424bd676dcc3d4f9ac8cea4dce52ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
