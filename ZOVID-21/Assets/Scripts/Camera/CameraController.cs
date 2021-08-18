@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
 {
     
     public GameObject[] septic;
+    public float cameraHeight = 10.4f;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,12 +21,12 @@ public class CameraController : MonoBehaviour
         {
             if(gameObject.tag == "CamAngled")
             {
-                transform.position = new Vector3(septic[0].transform.position.x + 14.1f, transform.position.y, septic[0].transform.position.z - 19.4f);
+                transform.position = new Vector3(septic[0].transform.position.x + 14.1f, transform.position.y , septic[0].transform.position.z - 19.4f);
                 transform.LookAt(septic[0].transform.position);
             }
             else
             {
-                transform.position = new Vector3(septic[0].transform.position.x, transform.position.y, septic[0].transform.position.z);
+                transform.position = new Vector3(septic[0].transform.position.x, cameraHeight, septic[0].transform.position.z);
             }
 
         }
