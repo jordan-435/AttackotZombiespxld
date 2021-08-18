@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
             }
             else
             {
-                transform.position = new Vector3(septic[0].transform.position.x, 10.4f, septic[0].transform.position.z);
+                transform.position = new Vector3(septic[0].transform.position.x, cameraHeight, septic[0].transform.position.z);
             }
 
         }
